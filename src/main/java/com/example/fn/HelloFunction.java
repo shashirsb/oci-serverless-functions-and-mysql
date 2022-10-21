@@ -50,7 +50,7 @@ public class HelloFunction {
 
             System.out.println("----------------------------5");
             int batchSize = 20;
-            BufferedReader lineReader = new BufferedReader(new FileReader("iot.csv"));
+            BufferedReader lineReader = new BufferedReader(new FileReader(csvFilePath));
             String lineText = null;
             int count = 0;
             lineReader.readLine(); // skip header line
