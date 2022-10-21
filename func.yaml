@@ -1,5 +1,5 @@
 schema_version: 20180708
-name: oci-serverless-functions-and-mysql
+name: tamo-iot
 version: 0.0.2
 runtime: java
 build_image: fnproject/fn-java-fdk-build:jdk17-1.0.151
