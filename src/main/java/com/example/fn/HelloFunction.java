@@ -240,7 +240,7 @@ public class HelloFunction {
     private static void simpleMessageLoop(
             StreamClient streamClient, String streamId, String initialCursor) {
         String cursor = initialCursor;
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 10; i++) {
 
             GetMessagesRequest getRequest = GetMessagesRequest.builder()
                     .streamId(streamId)
