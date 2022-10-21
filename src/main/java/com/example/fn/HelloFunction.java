@@ -22,8 +22,9 @@ public class HelloFunction {
     public String handleRequest(String input) throws SQLException {
         String name = (input == null || input.isEmpty()) ? "tamo-iot" : input;
 
-        String csvFilePath = "/function/csv/iot1.csv";
-        File file = new File(csvFilePath);
+        String csvFilePath = "iot1.csv";
+        File homedir = new File(System.getProperty("user.home"));
+        File file = new File(homedir, csvFilePath);
         String csvFileUrl = "https://objectstorage.us-ashburn-1.oraclecloud.com/p/n5odYj5P7tXVIb3X13wUamCIU0-BtiMif9rT-stBk_LEzp93xxgwFziQEF2cAP0u/n/sehubjapacprod/b/tamo-input-iot-files/o/people.csv";
 
         System.out.println("----------------------------1");
