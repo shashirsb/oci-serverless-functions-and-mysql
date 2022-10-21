@@ -11,6 +11,19 @@ import com.oracle.bmc.streaming.model.StreamSummary;
 import com.oracle.bmc.streaming.requests.ListStreamsRequest;
 import com.oracle.bmc.streaming.requests.PutMessagesRequest;
 import com.oracle.bmc.streaming.responses.ListStreamsResponse;
+import com.google.common.util.concurrent.Uninterruptibles;
+import com.oracle.bmc.ConfigFileReader;
+import com.oracle.bmc.auth.AuthenticationDetailsProvider;
+import com.oracle.bmc.auth.ConfigFileAuthenticationDetailsProvider;
+import com.oracle.bmc.streaming.StreamClient;
+import com.oracle.bmc.streaming.model.CreateGroupCursorDetails;
+import com.oracle.bmc.streaming.model.Message;
+import com.oracle.bmc.streaming.requests.CreateGroupCursorRequest;
+import com.oracle.bmc.streaming.requests.GetMessagesRequest;
+import com.oracle.bmc.streaming.responses.CreateGroupCursorResponse;
+import com.oracle.bmc.streaming.responses.GetMessagesResponse;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.mysql.cj.jdbc.MysqlDataSource;
 import org.apache.ibatis.mapping.Environment;
@@ -27,6 +40,7 @@ import java.sql.SQLException;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import java.io.*;
 import java.net.*;
@@ -186,28 +200,38 @@ public class HelloFunction {
             streamClient = new StreamClient(provider);
             streamClient.setEndpoint(streamClientEndpoint);
 
-            PutMessagesDetails putMessagesDetails = PutMessagesDetails.builder()
-                    .messages(Arrays.asList(PutMessagesDetailsEntry.builder().key("hello".getBytes())
-                            .value("world".getBytes()).build()))
-                    .build();
+            // PutMessagesDetails putMessagesDetails = PutMessagesDetails.builder()
+            // .messages(Arrays.asList(PutMessagesDetailsEntry.builder().key("hello".getBytes())
+            // .value("world".getBytes()).build()))
+            // .build();
 
-            PutMessagesRequest putMessagesRequest = PutMessagesRequest.builder()
-                    .putMessagesDetails(putMessagesDetails)
-                    .streamId(streamOCID)
-                    .build();
+            // PutMessagesRequest putMessagesRequest = PutMessagesRequest.builder()
+            // .putMessagesDetails(putMessagesDetails)
+            // .streamId(streamOCID)
+            // .build();
 
-            PutMessagesResult putMessagesResult = streamClient.putMessages(putMessagesRequest).getPutMessagesResult();
-            System.out.println("pushed messages...");
+            // PutMessagesResult putMessagesResult =
+            // streamClient.putMessages(putMessagesRequest).getPutMessagesResult();
+            // System.out.println("pushed messages...");
 
-            for (PutMessagesResultEntry entry : putMessagesResult.getEntries()) {
-                if (entry.getError() != null) {
-                    result = "Put message error " + entry.getErrorMessage();
-                    System.out.println(result);
-                } else {
-                    result = "Message pushed to offset " + entry.getOffset() + " in partition " + entry.getPartition();
-                    System.out.println(result);
-                }
-            }
+            // for (PutMessagesResultEntry entry : putMessagesResult.getEntries()) {
+            // if (entry.getError() != null) {
+            // result = "Put message error " + entry.getErrorMessage();
+            // System.out.println(result);
+            // } else {
+            // result = "Message pushed to offset " + entry.getOffset() + " in partition " +
+            // entry.getPartition();
+            // System.out.println(result);
+            // }
+            // }
+
+            // A cursor can be created as part of a consumer group.
+            // Committed offsets are managed for the group, and partitions
+            // are dynamically balanced amongst consumers in the group.
+            System.out.println("Starting a simple message loop with a group cursor");
+            String groupCursor = getCursorByGroup(streamClient, "ocid1.stream.oc1.iad.amaaaaaaak7gbriazqyqyteohrm52ogtfprbchqvb2wqhvacyxp2axwakbbq", "exampleGroup", "exampleInstance-1");
+            simpleMessageLoop(streamClient, "ocid1.stream.oc1.iad.amaaaaaaak7gbriazqyqyteohrm52ogtfprbchqvb2wqhvacyxp2axwakbbq", groupCursor);
+
         } catch (Exception e) {
             result = "Error occurred - " + e.getMessage();
 
@@ -224,4 +248,58 @@ public class HelloFunction {
         return result;
     }
 
+    private static void simpleMessageLoop(
+            StreamClient streamClient, String streamId, String initialCursor) {
+        String cursor = initialCursor;
+        for (int i = 0; i < 10; i++) {
+
+            GetMessagesRequest getRequest = GetMessagesRequest.builder()
+                    .streamId(streamId)
+                    .cursor(cursor)
+                    .limit(25)
+                    .build();
+
+            GetMessagesResponse getResponse = streamClient.getMessages(getRequest);
+
+            // process the messages
+            System.out.println(String.format("Read %s messages.", getResponse.getItems().size()));
+            for (Message message : ((GetMessagesResponse) getResponse).getItems()) {
+                System.out.println(
+                        String.format(
+                                "%s: %s",
+                                message.getKey() == null ? "Null" : new String(message.getKey(), UTF_8),
+                                new String(message.getValue(), UTF_8)));
+            }
+
+            // getMessages is a throttled method; clients should retrieve sufficiently large
+            // message
+            // batches, as to avoid too many http requests.
+            Uninterruptibles.sleepUninterruptibly(1, TimeUnit.SECONDS);
+
+            // use the next-cursor for iteration
+            cursor = getResponse.getOpcNextCursor();
+        }
+    }
+
+    private static String getCursorByGroup(
+            StreamClient streamClient, String streamId, String groupName, String instanceName) {
+        System.out.println(
+                String.format(
+                        "Creating a cursor for group %s, instance %s.", groupName, instanceName));
+
+        CreateGroupCursorDetails cursorDetails = CreateGroupCursorDetails.builder()
+                .groupName(groupName)
+                .instanceName(instanceName)
+                .type(CreateGroupCursorDetails.Type.TrimHorizon)
+                .commitOnGet(true)
+                .build();
+
+        CreateGroupCursorRequest createCursorRequest = CreateGroupCursorRequest.builder()
+                .streamId(streamId)
+                .createGroupCursorDetails(cursorDetails)
+                .build();
+
+        CreateGroupCursorResponse groupCursorResponse = streamClient.createGroupCursor(createCursorRequest);
+        return groupCursorResponse.getCursor().getValue();
+    }
 }
