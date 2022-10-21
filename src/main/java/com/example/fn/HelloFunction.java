@@ -30,6 +30,7 @@ public class HelloFunction {
 
         try (BufferedInputStream in = new BufferedInputStream(new URL(csvFileUrl).openStream());
                 FileOutputStream fileOutputStream = new FileOutputStream(file)) {
+            System.out.println("----------------------------2a");
             PrintWriter writer = new PrintWriter(csvFilePath, "UTF-8");
             writer.println("The first line");
             writer.println("13,shail,kumar");
@@ -37,7 +38,7 @@ public class HelloFunction {
 
             byte dataBuffer[] = new byte[1024];
             int bytesRead;
-            System.out.println("----------------------------2");
+            System.out.println("----------------------------2b");
             while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
                 fileOutputStream.write(dataBuffer, 0, bytesRead);
                 System.out.println(dataBuffer);
