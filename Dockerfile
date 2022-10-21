@@ -8,7 +8,7 @@ ADD src /function/src
 RUN ["mvn", "package"]
 FROM fnproject/fn-java-fdk:jre17-1.0.151
 RUN mkdir -p /function/csv
-RUN chmod -R 777 /function/csv
 WORKDIR /function
 COPY --from=build-stage /function/target/*.jar /function/app/
+USER root
 CMD ["com.example.fn.HelloFunction::handleRequest"]
