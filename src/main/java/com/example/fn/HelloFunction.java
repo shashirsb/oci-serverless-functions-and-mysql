@@ -32,20 +32,22 @@ public class HelloFunction {
             while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
                 fileOutputStream.write(dataBuffer, 0, bytesRead);
             }
+        } catch (FileNotFoundException e) {
+            // handle exception
         } catch (IOException e) {
             // handle exception
         }
-
-        int batchSize = 20;
-        BufferedReader lineReader = new BufferedReader(new FileReader(csvFilePath));
-        String lineText = null;
-        int count = 0;
-        lineReader.readLine(); // skip header line
 
         Configuration configuration = initMybatis();
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
         try (SqlSession session = sqlSessionFactory.openSession()) {
             PersonMapper personMapper = session.getMapper(PersonMapper.class);
+
+            int batchSize = 20;
+            BufferedReader lineReader = new BufferedReader(new FileReader(csvFilePath));
+            String lineText = null;
+            int count = 0;
+            lineReader.readLine(); // skip header line
 
             while ((lineText = lineReader.readLine()) != null) {
                 String[] data = lineText.split(",");
@@ -64,7 +66,9 @@ public class HelloFunction {
             }
 
             session.commit();
-        } catch (IOException ex) {
+        } catch (FileNotFoundException e) {
+            // handle exception
+        }catch (IOException ex) {
             System.err.println(ex);
         }
 
