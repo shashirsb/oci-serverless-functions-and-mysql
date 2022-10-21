@@ -23,14 +23,14 @@ public class HelloFunction {
         String name = (input == null || input.isEmpty()) ? "tamo-iot" : input;
 
         String csvFilePath = "iot1.csv";
-        File homedir = new File(System.getProperty("user.home"));
-        File file = new File(homedir, csvFilePath);
+        // File homedir = new File(System.getProperty("user.home"));
+        // File file = new File(homedir, csvFilePath);
         String csvFileUrl = "https://objectstorage.us-ashburn-1.oraclecloud.com/p/n5odYj5P7tXVIb3X13wUamCIU0-BtiMif9rT-stBk_LEzp93xxgwFziQEF2cAP0u/n/sehubjapacprod/b/tamo-input-iot-files/o/people.csv";
 
         System.out.println("----------------------------1");
 
         try (BufferedInputStream in = new BufferedInputStream(new URL(csvFileUrl).openStream());
-                FileOutputStream fileOutputStream = new FileOutputStream(file)) {
+                 FileWriter fileOutputStream = new FileWriter("/tmp" + csvFilePath, true)) {
             System.out.println("----------------------------2a");
             PrintWriter writer = new PrintWriter(csvFilePath, "UTF-8");
             writer.println("The first line");
