@@ -58,9 +58,9 @@ public class HelloFunction {
             while ((lineText = lineReader.readLine()) != null) {
                 String[] data = lineText.split(",");
                 Person newPerson = new Person();
-                newPerson.setId(Long.parseLong(data[0]));
-                newPerson.setFirstName(data[1]);
-                newPerson.setLastName(data[2]);
+                newPerson.setId(3L);
+                newPerson.setFirstName("oracleiot");
+                newPerson.setLastName("oracle");
                 Integer insertCount = personMapper.insert(newPerson);
                 System.out.println(insertCount);
                 System.out.println("----------------------------7");
