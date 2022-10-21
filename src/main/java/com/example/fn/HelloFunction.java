@@ -56,7 +56,7 @@ public class HelloFunction {
 
             sAdminClient = new StreamAdminClient(provider);
             String region = System.getenv().get("STREAM_REGION"); // e.g. us-phoenix-1
-            sAdminClient.setEndpoint("https://streams." + region + ".streaming.oci.oraclecloud.com");
+            sAdminClient.setEndpoint("https://cell-1.streaming.us-ashburn-1.oci.oraclecloud.com");
             produce();
         } catch (Throwable ex) {
             System.err.println("Error occurred in StreamProducerFunction constructor - " + ex.getMessage());
