@@ -47,7 +47,7 @@ public class HelloFunction {
         try (SqlSession session = sqlSessionFactory.openSession()) {
             PersonMapper personMapper = session.getMapper(PersonMapper.class);
 
-            int batchSize = 20;
+            //int batchSize = 20;
             BufferedReader lineReader = new BufferedReader(new FileReader(file));
             String lineText = null;
            
@@ -62,8 +62,9 @@ public class HelloFunction {
                 System.out.println(insertCount);
             }
 
-            //List<Person> persons = personMapper.selectAll();            
+            //List<Person> persons = personMapper.selectAll();                        
             session.commit();
+            lineReader.close();
         } catch (FileNotFoundException e) {
             System.out.println(e);
         } catch (IOException ex) {
