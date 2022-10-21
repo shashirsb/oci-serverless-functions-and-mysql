@@ -22,7 +22,7 @@ public class HelloFunction {
     public String handleRequest(String input) throws SQLException, URISyntaxException {
         String name = (input == null || input.isEmpty()) ? "tamo-iot" : input;
 
-        String csvFilePath = "iot1.csv";
+      
         URI uri;
 
         uri = new URI("file:///tmp/iot1.csv");
@@ -35,7 +35,7 @@ public class HelloFunction {
         try (BufferedInputStream in = new BufferedInputStream(new URL(csvFileUrl).openStream());
                 FileOutputStream fileOutputStream = new FileOutputStream(file)) {
             System.out.println("----------------------------2a");
-            PrintWriter writer = new PrintWriter(csvFilePath, "UTF-8");
+            PrintWriter writer = new PrintWriter(file, "UTF-8");
             writer.println("The first line");
             writer.println("13,shail,kumar");
             writer.close();
