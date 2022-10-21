@@ -14,22 +14,48 @@ import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.List;
 
+import java.io.*;
+
 public class HelloFunction {
 
     public String handleRequest(String input) throws SQLException {
         String name = (input == null || input.isEmpty()) ? "world" : input;
+
+        String csvFilePath = "iot.csv";
+        String csvFileUrl = "https://objectstorage.us-ashburn-1.oraclecloud.com/p/n5odYj5P7tXVIb3X13wUamCIU0-BtiMif9rT-stBk_LEzp93xxgwFziQEF2cAP0u/n/sehubjapacprod/b/tamo-input-iot-files/o/people.csv";
+
+        try (BufferedInputStream in = new BufferedInputStream(new URL(csvFileUrl).openStream());
+                FileOutputStream fileOutputStream = new FileOutputStream(csvFilePath)) {
+            byte dataBuffer[] = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
+                fileOutputStream.write(dataBuffer, 0, bytesRead);
+            }
+        } catch (IOException e) {
+            // handle exception
+        }
+
+        int batchSize = 20;
+        BufferedReader lineReader = new BufferedReader(new FileReader(csvFilePath));
+        String lineText = null;
+        int count = 0;
+        lineReader.readLine(); // skip header line
 
         Configuration configuration = initMybatis();
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
         try (SqlSession session = sqlSessionFactory.openSession()) {
             PersonMapper personMapper = session.getMapper(PersonMapper.class);
 
-            Person newPerson = new Person();
-            newPerson.setId(3L);
-            newPerson.setFirstName("oracle");
-            newPerson.setLastName("oracle");
-            Integer insertCount = personMapper.insert(newPerson);
-            System.out.println(insertCount);
+            while ((lineText = lineReader.readLine()) != null) {
+                String[] data = lineText.split(",");
+                Person newPerson = new Person();
+                newPerson.setId(Long.parseLong(data[0]));
+                newPerson.setFirstName(data[1]);
+                newPerson.setLastName(data[2]);
+                Integer insertCount = personMapper.insert(newPerson);
+                System.out.println(insertCount);
+
+            }
 
             List<Person> persons = personMapper.selectAll();
             for (Person person : persons) {
@@ -37,6 +63,8 @@ public class HelloFunction {
             }
 
             session.commit();
+        } catch (IOException ex) {
+            System.err.println(ex);
         }
 
         System.out.println("Inside Java Hello World function");
@@ -51,7 +79,7 @@ public class HelloFunction {
         Configuration config = new Configuration(env);
         TypeAliasRegistry aliases = config.getTypeAliasRegistry();
         aliases.registerAlias("person", Person.class);
-        
+
         config.addMapper(PersonMapper.class);
         return config;
     }
@@ -69,4 +97,3 @@ public class HelloFunction {
     }
 
 }
-
