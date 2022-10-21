@@ -7,7 +7,9 @@ RUN ["mvn", "package", "dependency:copy-dependencies", "-DincludeScope=runtime",
 ADD src /function/src
 RUN ["mvn", "package"]
 FROM fnproject/fn-java-fdk:jre17-1.0.151
+USER root
 RUN mkdir -p /function/csv
+RUN chmod -R 777 /function
 WORKDIR /function
 COPY --from=build-stage /function/target/*.jar /function/app/
 USER root
