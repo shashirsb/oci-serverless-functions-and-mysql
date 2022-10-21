@@ -35,10 +35,10 @@ public class HelloFunction {
         try (BufferedInputStream in = new BufferedInputStream(new URL(csvFileUrl).openStream());
                 FileOutputStream fileOutputStream = new FileOutputStream(file)) {
             System.out.println("----------------------------2a");
-            PrintWriter writer = new PrintWriter(file, "UTF-8");
-            writer.println("The first line");
-            writer.println("13,shail,kumar");
-            writer.close();
+            // PrintWriter writer = new PrintWriter(file, "UTF-8");
+            // writer.println("The first line");
+            // writer.println("13,shail,kumar");
+            // writer.close();
 
             byte dataBuffer[] = new byte[1024];
             int bytesRead;
