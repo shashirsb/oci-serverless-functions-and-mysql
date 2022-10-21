@@ -42,8 +42,10 @@ public class HelloFunction {
             }
             System.out.println("----------------------------3");
         } catch (FileNotFoundException e) {
+            System.out.println("----------------------------3a");
             System.out.println(e);
         } catch (IOException e) {
+            System.out.println("----------------------------3b");
             System.out.println(e);
         }
 
@@ -79,8 +81,10 @@ public class HelloFunction {
             System.out.println("----------------------------9");
             session.commit();
         } catch (FileNotFoundException e) {
+            System.out.println("----------------------------9a");
             System.out.println(e);
         } catch (IOException ex) {
+            System.out.println("----------------------------9b");
             System.err.println(ex);
         }
 
