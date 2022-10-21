@@ -25,30 +25,36 @@ public class HelloFunction {
         String csvFilePath = "iot.csv";
         String csvFileUrl = "https://objectstorage.us-ashburn-1.oraclecloud.com/p/n5odYj5P7tXVIb3X13wUamCIU0-BtiMif9rT-stBk_LEzp93xxgwFziQEF2cAP0u/n/sehubjapacprod/b/tamo-input-iot-files/o/people.csv";
 
+        System.out.println("----------------------------1");
+
         try (BufferedInputStream in = new BufferedInputStream(new URL(csvFileUrl).openStream());
                 FileOutputStream fileOutputStream = new FileOutputStream(csvFilePath)) {
             byte dataBuffer[] = new byte[1024];
             int bytesRead;
+            System.out.println("----------------------------2");
             while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
                 fileOutputStream.write(dataBuffer, 0, bytesRead);
             }
+            System.out.println("----------------------------3");
         } catch (FileNotFoundException e) {
             System.out.println(e);
         } catch (IOException e) {
             System.out.println(e);
         }
 
+        System.out.println("----------------------------4");
         Configuration configuration = initMybatis();
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
         try (SqlSession session = sqlSessionFactory.openSession()) {
             PersonMapper personMapper = session.getMapper(PersonMapper.class);
 
+            System.out.println("----------------------------5");
             int batchSize = 20;
             BufferedReader lineReader = new BufferedReader(new FileReader(csvFilePath));
             String lineText = null;
             int count = 0;
             lineReader.readLine(); // skip header line
-
+            System.out.println("----------------------------6");
             while ((lineText = lineReader.readLine()) != null) {
                 String[] data = lineText.split(",");
                 Person newPerson = new Person();
@@ -57,18 +63,19 @@ public class HelloFunction {
                 newPerson.setLastName(data[2]);
                 Integer insertCount = personMapper.insert(newPerson);
                 System.out.println(insertCount);
-
+                System.out.println("----------------------------7");
             }
 
+            System.out.println("----------------------------8");
             List<Person> persons = personMapper.selectAll();
             for (Person person : persons) {
                 System.out.println(person);
             }
-
+            System.out.println("----------------------------9");
             session.commit();
         } catch (FileNotFoundException e) {
             System.out.println(e);
-        }catch (IOException ex) {
+        } catch (IOException ex) {
             System.err.println(ex);
         }
 
