@@ -22,7 +22,7 @@ public class HelloFunction {
     public String handleRequest(String input) throws SQLException {
         String name = (input == null || input.isEmpty()) ? "tamo-iot" : input;
 
-        String csvFilePath = "/" + "iot1.csv";
+        String csvFilePath = "./" + "iot.csv";
         String csvFileUrl = "https://objectstorage.us-ashburn-1.oraclecloud.com/p/n5odYj5P7tXVIb3X13wUamCIU0-BtiMif9rT-stBk_LEzp93xxgwFziQEF2cAP0u/n/sehubjapacprod/b/tamo-input-iot-files/o/people.csv";
 
         System.out.println("----------------------------1");
@@ -60,7 +60,7 @@ public class HelloFunction {
                 Person newPerson = new Person();
                 newPerson.setId(3L);
                 newPerson.setFirstName("oracleiot");
-                newPerson.setLastName("oracle");
+                newPerson.setLastName("oraclesr");
                 Integer insertCount = personMapper.insert(newPerson);
                 System.out.println(insertCount);
                 System.out.println("----------------------------7");
