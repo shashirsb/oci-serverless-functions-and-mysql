@@ -57,15 +57,15 @@ public class HelloFunction {
 
         try {
 
-            System.out.println("-------------1a");
+      
             sAdminClient = new StreamAdminClient(provider);
-            System.out.println("-------------1b");
+      
             String region = System.getenv().get("STREAM_REGION"); // e.g. us-phoenix-1
-            System.out.println("-------------1c");
+       
             sAdminClient.setEndpoint("https://cell-1.streaming.us-ashburn-1.oci.oraclecloud.com");
-            System.out.println("-------------1d");
+         
             produce();
-            System.out.println("-------------1e");
+          
         } catch (Throwable ex) {
             System.err.println("Error occurred in StreamProducerFunction constructor - " + ex.getMessage());
         }
