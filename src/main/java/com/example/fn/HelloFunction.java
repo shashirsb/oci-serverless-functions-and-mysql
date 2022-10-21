@@ -33,9 +33,9 @@ public class HelloFunction {
                 fileOutputStream.write(dataBuffer, 0, bytesRead);
             }
         } catch (FileNotFoundException e) {
-            // handle exception
+            System.out.println(e);
         } catch (IOException e) {
-            // handle exception
+            System.out.println(e);
         }
 
         Configuration configuration = initMybatis();
@@ -67,7 +67,7 @@ public class HelloFunction {
 
             session.commit();
         } catch (FileNotFoundException e) {
-            // handle exception
+            System.out.println(e);
         }catch (IOException ex) {
             System.err.println(ex);
         }
