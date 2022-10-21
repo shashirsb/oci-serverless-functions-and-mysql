@@ -109,8 +109,7 @@ public class HelloFunction {
                 newPerson.setId(Long.parseLong(data[0]));
                 newPerson.setFirstName(data[1]);
                 newPerson.setLastName(data[2]);
-                Integer insertCount = personMapper.insert(newPerson);
-                System.out.println(insertCount);
+                
             }
 
             // List<Person> persons = personMapper.selectAll();
@@ -257,7 +256,7 @@ public class HelloFunction {
                 System.out.println(
                         String.format(
                                 "%s: %s",
-                                message.getKey() == null ? "Null" : new String(message.getKey(), UTF_8),
+                                message.getKey() == null ? "data" : new String(message.getKey(), UTF_8),
                                 new String(message.getValue(), UTF_8)));
             }
 
