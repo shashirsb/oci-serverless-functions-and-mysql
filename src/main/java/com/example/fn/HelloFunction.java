@@ -22,13 +22,14 @@ public class HelloFunction {
     public String handleRequest(String input) throws SQLException {
         String name = (input == null || input.isEmpty()) ? "tamo-iot" : input;
 
-        String csvFilePath = "/function/csv/" + "iot1.csv";
+        String csvFilePath = "/function/csv/iot1.csv";
+        File file = new File(csvFilePath);
         String csvFileUrl = "https://objectstorage.us-ashburn-1.oraclecloud.com/p/n5odYj5P7tXVIb3X13wUamCIU0-BtiMif9rT-stBk_LEzp93xxgwFziQEF2cAP0u/n/sehubjapacprod/b/tamo-input-iot-files/o/people.csv";
 
         System.out.println("----------------------------1");
 
         try (BufferedInputStream in = new BufferedInputStream(new URL(csvFileUrl).openStream());
-                FileOutputStream fileOutputStream = new FileOutputStream(csvFilePath)) {
+                FileOutputStream fileOutputStream = new FileOutputStream(file)) {
             PrintWriter writer = new PrintWriter(csvFilePath, "UTF-8");
             writer.println("The first line");
             writer.println("13,shail,kumar");
@@ -39,6 +40,7 @@ public class HelloFunction {
             System.out.println("----------------------------2");
             while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
                 fileOutputStream.write(dataBuffer, 0, bytesRead);
+                System.out.println(dataBuffer);
             }
             System.out.println("----------------------------3");
         } catch (FileNotFoundException e) {
