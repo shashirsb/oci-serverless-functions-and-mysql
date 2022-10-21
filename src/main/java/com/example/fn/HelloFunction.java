@@ -22,7 +22,7 @@ public class HelloFunction {
     public String handleRequest(String input) throws SQLException {
         String name = (input == null || input.isEmpty()) ? "tamo-iot" : input;
 
-        String csvFilePath = "iot.csv";
+        String csvFilePath = "iot1.csv";
         String csvFileUrl = "https://objectstorage.us-ashburn-1.oraclecloud.com/p/n5odYj5P7tXVIb3X13wUamCIU0-BtiMif9rT-stBk_LEzp93xxgwFziQEF2cAP0u/n/sehubjapacprod/b/tamo-input-iot-files/o/people.csv";
 
         System.out.println("----------------------------1");
@@ -50,7 +50,7 @@ public class HelloFunction {
 
             System.out.println("----------------------------5");
             int batchSize = 20;
-            BufferedReader lineReader = new BufferedReader(new FileReader(csvFilePath));
+            BufferedReader lineReader = new BufferedReader(new FileReader("iot.csv"));
             String lineText = null;
             int count = 0;
             lineReader.readLine(); // skip header line
