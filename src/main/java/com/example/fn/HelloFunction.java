@@ -245,7 +245,7 @@ public class HelloFunction {
             GetMessagesRequest getRequest = GetMessagesRequest.builder()
                     .streamId(streamId)
                     .cursor(cursor)
-                    .limit(1)
+                    .limit(25)
                     .build();
 
             GetMessagesResponse getResponse = streamClient.getMessages(getRequest);
