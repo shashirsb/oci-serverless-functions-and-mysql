@@ -296,8 +296,8 @@ public class HelloFunction {
                 System.out.println(
                         String.format(
                                 "%s: %s",
-                                message.getKey() == null ? "data" : new String(message.getKey(), UTF_8),
-                                new String(message.getValue(), UTF_8)));
+                                "jsonObj",
+                                new String(message.getValue())));
             }
 
             // getMessages is a throttled method; clients should retrieve sufficiently large
