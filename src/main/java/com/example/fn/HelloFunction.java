@@ -137,9 +137,9 @@ public class HelloFunction {
         Environment env = new Environment("dev", trxFactory, dataSource);
         Configuration config = new Configuration(env);
         TypeAliasRegistry aliases = config.getTypeAliasRegistry();
-        aliases.registerAlias("veh_iot", Person.class);
+        aliases.registerAlias("veh_iot", VehicleIOT.class);
 
-        config.addMapper(PersonMapper.class);
+        config.addMapper(VehicleIOTMapper.class);
         return config;
     }
 
