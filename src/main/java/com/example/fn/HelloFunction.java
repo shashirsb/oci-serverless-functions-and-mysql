@@ -218,8 +218,8 @@ public class HelloFunction {
             // Committed offsets are managed for the group, and partitions
             // are dynamically balanced amongst consumers in the group.
             System.out.println("Starting a simple message loop with a group cursor");
-            String groupCursor = getCursorByGroup(streamClient, "ocid1.stream.oc1.iad.amaaaaaaak7gbriazqyqyteohrm52ogtfprbchqvb2wqhvacyxp2axwakbbq", "exampleGroup", "exampleInstance-1");
-            simpleMessageLoop(streamClient, "ocid1.stream.oc1.iad.amaaaaaaak7gbriazqyqyteohrm52ogtfprbchqvb2wqhvacyxp2axwakbbq", groupCursor);
+            String groupCursor = getCursorByGroup(streamClient, "ocid1.stream.oc1.iad.amaaaaaaak7gbriastx37iu27vegisyx33smp36ijherxrmeota5c3w4u77a", "exampleGroup", "exampleInstance-1");
+            simpleMessageLoop(streamClient, "ocid1.stream.oc1.iad.amaaaaaaak7gbriastx37iu27vegisyx33smp36ijherxrmeota5c3w4u77a", groupCursor);
 
         } catch (Exception e) {
             result = "Error occurred - " + e.getMessage();
