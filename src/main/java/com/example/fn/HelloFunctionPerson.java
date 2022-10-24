@@ -61,7 +61,7 @@ import java.net.*;
 
 import org.json.*;
 
-public class HelloFunction {
+public class HelloFunctionPerson {
 
     private StreamAdminClient sAdminClient = null;
     private StreamClient streamClient = null;
@@ -137,7 +137,7 @@ public class HelloFunction {
         Environment env = new Environment("dev", trxFactory, dataSource);
         Configuration config = new Configuration(env);
         TypeAliasRegistry aliases = config.getTypeAliasRegistry();
-        aliases.registerAlias("veh_iot", Person.class);
+        aliases.registerAlias("person", Person.class);
 
         config.addMapper(PersonMapper.class);
         return config;
@@ -244,7 +244,7 @@ public class HelloFunction {
             SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
 
             try (SqlSession session = sqlSessionFactory.openSession()) {
-                VehicleIOTMapper vehicleiotMapper = session.getMapper(VehicleIOTMapper.class);
+                PersonMapper personMapper = session.getMapper(PersonMapper.class);
 
                 // int batchSize = 20;
                 // BufferedReader lineReader = new BufferedReader(new FileReader(file));
@@ -256,32 +256,16 @@ public class HelloFunction {
 
                 while ((lineText = lineReader.readLine()) != null) {
                     String[] data = lineText.split(",");
-                    VehicleIOT newVehicleIOT = new VehicleIOT();
-                    newVehicleIOT.setCOMPACTNESS(Integer.parseInt(data[0]));
-                    newVehicleIOT.setCIRCULARITY(Integer.parseInt(data[1]));
-                    newVehicleIOT.setDISTANCE_CIRCULARITY(Integer.parseInt(data[2]));
-                    newVehicleIOT.setRADIUS_RATIO(Integer.parseInt(data[3]));
-                    newVehicleIOT.setPR_AXIS_ASPECT_RATIO(Integer.parseInt(data[4]));
-                    newVehicleIOT.setMAX_LENGTH_ASPECT_RATIO(Integer.parseInt(data[5]));
-                    newVehicleIOT.setSCATTER_RATIO(Integer.parseInt(data[6]));
-                    newVehicleIOT.setELONGATEDNESS(Integer.parseInt(data[7]));
-                    newVehicleIOT.setPR_AXIS_RECTANGULARITY(Integer.parseInt(data[8]));
-                    newVehicleIOT.setMAX_LENGTH_RECTANGULARITY(Integer.parseInt(data[9]));
-                    newVehicleIOT.setSCALED_VARIANCE_MAJOR(Integer.parseInt(data[10]));
-                    newVehicleIOT.setSCALED_VARIANCE_MINOR(Integer.parseInt(data[11]));
-                    newVehicleIOT.setSCALED_RADIUS_OF_GYRATION(Integer.parseInt(data[12]));
-                    newVehicleIOT.setSKEWNESS_ABOUT_MAJOR(Integer.parseInt(data[13]));
-                    newVehicleIOT.setSKEWNESS_ABOUT_MINOR(Integer.parseInt(data[14]));
-                    newVehicleIOT.setKURTOSIS_ABOUT_MAJOR(Integer.parseInt(data[15]));
-                    newVehicleIOT.setKURTOSIS_ABOUT_MINOR(Integer.parseInt(data[16]));
-                    newVehicleIOT.setHOLLOWS_RATIO(Integer.parseInt(data[17]));
-                    newVehicleIOT.setCategory(data[18]);
-                    vehicleiotMapper.insert(newVehicleIOT);
+                    Person newPerson = new Person();
+                    newPerson.setId(Long.parseLong(data[0]));
+                    newPerson.setFirstName(data[1]);
+                    newPerson.setLastName(data[2]);
+                    personMapper.insert(newPerson);
 
                 }
-                List<VehicleIOT> vehicleiots = vehicleiotMapper.selectAll();
-                for (VehicleIOT vehicleiot : vehicleiots) {
-                    System.out.println(vehicleiot);
+                List<Person> persons = personMapper.selectAll();
+                for (Person person : persons) {
+                    System.out.println(person);
                 }
 
                 session.commit();
