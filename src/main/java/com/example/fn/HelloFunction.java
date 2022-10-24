@@ -81,15 +81,13 @@ public class HelloFunction {
             objStorageClient = new ObjectStorageClient(provider);
             objStorageClient.setRegion("us-ashburn-1");
 
-            // String filename = consumer();
-            fileContent = getObjectStorage("time2.csv");
+            String filename = consumer();
+            System.out.println("#####################1" + filename);
+            // fileContent = getObjectStorage(filename);
 
         } catch (Throwable ex) {
             System.err.println("Error occurred in StreamProducerFunction constructor - " + ex.getMessage());
         }
-
-        // Insert into MYSQL
-        String name = (input == null || input.isEmpty()) ? "tamo-iot" : input;
 
         // URI uri = new URI("file:///tmp/iot.csv");
 
@@ -181,31 +179,7 @@ public class HelloFunction {
             streamClient = new StreamClient(provider);
             streamClient.setEndpoint(streamClientEndpoint);
 
-            // PutMessagesDetails putMessagesDetails = PutMessagesDetails.builder()
-            // .messages(Arrays.asList(PutMessagesDetailsEntry.builder().key("hello".getBytes())
-            // .value("world".getBytes()).build()))
-            // .build();
-
-            // PutMessagesRequest putMessagesRequest = PutMessagesRequest.builder()
-            // .putMessagesDetails(putMessagesDetails)
-            // .streamId(streamOCID)
-            // .build();
-
-            // PutMessagesResult putMessagesResult =
-            // streamClient.putMessages(putMessagesRequest).getPutMessagesResult();
-            // System.out.println("pushed messages...");
-
-            // for (PutMessagesResultEntry entry : putMessagesResult.getEntries()) {
-            // if (entry.getError() != null) {
-            // result = "Put message error " + entry.getErrorMessage();
-            // System.out.println(result);
-            // } else {
-            // result = "Message pushed to offset " + entry.getOffset() + " in partition " +
-            // entry.getPartition();
-            // System.out.println(result);
-            // }
-            // }
-
+          
             // A cursor can be created as part of a consumer group.
             // Committed offsets are managed for the group, and partitions
             // are dynamically balanced amongst consumers in the group.
@@ -220,29 +194,27 @@ public class HelloFunction {
             result = "Error occurred - " + e.getMessage();
 
             System.out.println(result);
-            // } finally {
-            // sAdminClient.close();
-            // streamClient.close();
-            // System.out.println("Closed stream clients");
-            // }
+        } finally {
+            sAdminClient.close();
+            streamClient.close();
+            System.out.println("Closed stream clients");
         }
-        return result;
+    return result;
+
     }
 
     public BufferedReader getObjectStorage(String objectName) {
         String result = null;
 
-        System.out.println("--------------------1");
         if (objStorageClient == null) {
             result = "Object Storage client is ready";
             System.out.println(result);
             // return result;
         }
-        System.out.println("--------------------2");
+
         // fetch the file from the object storage
         String bucketName = "tamo-input-iot-files";
         // String objectName = _objectName;
-        System.out.println("--------------------3");
         try {
             GetObjectResponse getResponse = objStorageClient.getObject(
                     GetObjectRequest.builder()
@@ -250,22 +222,25 @@ public class HelloFunction {
                             .bucketName(bucketName)
                             .objectName(objectName)
                             .build());
-            System.out.println("--------------------4");
+
+            // Insert into MYSQL
+            // String name = (objectName == null || objectName.isEmpty()) ? "tamo-iot" :
+            // objectName;
 
             Configuration configuration = initMybatis();
             SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
-            System.out.println("--------------------4a");
+
             try (SqlSession session = sqlSessionFactory.openSession()) {
                 PersonMapper personMapper = session.getMapper(PersonMapper.class);
-                System.out.println("--------------------4b");
+
                 // int batchSize = 20;
                 // BufferedReader lineReader = new BufferedReader(new FileReader(file));
                 BufferedReader lineReader = new BufferedReader(new InputStreamReader(getResponse.getInputStream()));
-                System.out.println("--------------------4c");
+
                 String lineText = null;
 
                 lineReader.readLine(); // skip header line
-                System.out.println("--------------------4d");
+
                 while ((lineText = lineReader.readLine()) != null) {
                     String[] data = lineText.split(",");
                     Person newPerson = new Person();
@@ -275,17 +250,14 @@ public class HelloFunction {
                     personMapper.insert(newPerson);
 
                 }
-                System.out.println("--------------------4e");
                 List<Person> persons = personMapper.selectAll();
                 for (Person person : persons) {
-                    System.out.println("--------------------4e1");
                     System.out.println(person);
                 }
 
                 session.commit();
-                // session.close();
-                // lineReader.close();
-                System.out.println("--------------------4f");
+                session.close();
+                lineReader.close();
             } catch (FileNotFoundException e) {
                 System.out.println(e);
             } catch (IOException ex) {
