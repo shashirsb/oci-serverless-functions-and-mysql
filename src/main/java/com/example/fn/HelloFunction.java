@@ -254,7 +254,7 @@ public class HelloFunction {
         return result;
     }
 
-    public String getObjectStorage(String _objectName) {
+    public String getObjectStorage(String objectName) {
         String result = null;
 
         System.out.println("--------------------1");
@@ -266,7 +266,7 @@ public class HelloFunction {
         System.out.println("--------------------2");
         // fetch the file from the object storage
         String bucketName = "tamo-input-iot-files";
-        String objectName = _objectName;
+        // String objectName = _objectName;
         System.out.println("--------------------3");
         GetObjectResponse getResponse = objStorageClient.getObject(
                 GetObjectRequest.builder()
