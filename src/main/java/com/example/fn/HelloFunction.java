@@ -81,7 +81,7 @@ public class HelloFunction {
             objStorageClient = new ObjectStorageClient(provider);
             objStorageClient.setRegion("us-ashburn-1");
 
-            //String filename = consumer();
+            // String filename = consumer();
             fileContent = getObjectStorage("time2.csv");
 
         } catch (Throwable ex) {
@@ -93,27 +93,26 @@ public class HelloFunction {
 
         // URI uri = new URI("file:///tmp/iot.csv");
 
-
         // // File homedir = new File(System.getProperty("user.home"));
         // File file = new File(uri);
-        // String csvFileUrl = "https://objectstorage.us-ashburn-1.oraclecloud.com/p/n5odYj5P7tXVIb3X13wUamCIU0-BtiMif9rT-stBk_LEzp93xxgwFziQEF2cAP0u/n/sehubjapacprod/b/tamo-input-iot-files/o/people.csv";
+        // String csvFileUrl =
+        // "https://objectstorage.us-ashburn-1.oraclecloud.com/p/n5odYj5P7tXVIb3X13wUamCIU0-BtiMif9rT-stBk_LEzp93xxgwFziQEF2cAP0u/n/sehubjapacprod/b/tamo-input-iot-files/o/people.csv";
 
-        // try (BufferedInputStream in = new BufferedInputStream(new URL(csvFileUrl).openStream());
-        //         FileOutputStream fileOutputStream = new FileOutputStream(file)) {
+        // try (BufferedInputStream in = new BufferedInputStream(new
+        // URL(csvFileUrl).openStream());
+        // FileOutputStream fileOutputStream = new FileOutputStream(file)) {
 
-        //     byte dataBuffer[] = new byte[1024];
-        //     int bytesRead;
-        //     while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
-        //         fileOutputStream.write(dataBuffer, 0, bytesRead);
+        // byte dataBuffer[] = new byte[1024];
+        // int bytesRead;
+        // while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
+        // fileOutputStream.write(dataBuffer, 0, bytesRead);
 
-        //     }
-        // } catch (FileNotFoundException e) {
-        //     System.out.println(e);
-        // } catch (IOException e) {
-        //     System.out.println(e);
         // }
-
-       
+        // } catch (FileNotFoundException e) {
+        // System.out.println(e);
+        // } catch (IOException e) {
+        // System.out.println(e);
+        // }
 
         System.out.println("Inside Java Hello World function");
         return "Hello, World!";
@@ -237,7 +236,7 @@ public class HelloFunction {
         if (objStorageClient == null) {
             result = "Object Storage client is ready";
             System.out.println(result);
-           // return result;
+            // return result;
         }
         System.out.println("--------------------2");
         // fetch the file from the object storage
@@ -246,14 +245,12 @@ public class HelloFunction {
         System.out.println("--------------------3");
         try {
             GetObjectResponse getResponse = objStorageClient.getObject(
-                    GetObjectRequest.builder()                 
+                    GetObjectRequest.builder()
                             .namespaceName("sehubjapacprod")
                             .bucketName(bucketName)
                             .objectName(objectName)
                             .build());
             System.out.println("--------------------4");
-
-
 
             Configuration configuration = initMybatis();
             SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
@@ -262,11 +259,11 @@ public class HelloFunction {
                 PersonMapper personMapper = session.getMapper(PersonMapper.class);
                 System.out.println("--------------------4b");
                 // int batchSize = 20;
-                //BufferedReader lineReader = new BufferedReader(new FileReader(file));
-                BufferedReader lineReader =  new BufferedReader(new InputStreamReader(getResponse.getInputStream()));
+                // BufferedReader lineReader = new BufferedReader(new FileReader(file));
+                BufferedReader lineReader = new BufferedReader(new InputStreamReader(getResponse.getInputStream()));
                 System.out.println("--------------------4c");
                 String lineText = null;
-    
+
                 lineReader.readLine(); // skip header line
                 System.out.println("--------------------4d");
                 while ((lineText = lineReader.readLine()) != null) {
@@ -276,22 +273,23 @@ public class HelloFunction {
                     newPerson.setFirstName(data[1]);
                     newPerson.setLastName(data[2]);
                     System.out.println(data[1]);
-    
+
                 }
                 System.out.println("--------------------4e");
                 List<Person> persons = personMapper.selectAll();
-                 session.commit();
-                session.close();
-                lineReader.close();
+                for (Person person : persons) {
+                    System.out.println(person);
+                }
+
+                session.commit();
+                // session.close();
+                // lineReader.close();
                 System.out.println("--------------------4f");
             } catch (FileNotFoundException e) {
                 System.out.println(e);
             } catch (IOException ex) {
                 System.err.println(ex);
             }
- 
-
-    
 
             // use fileStream
             System.out.println("--------------------5");
