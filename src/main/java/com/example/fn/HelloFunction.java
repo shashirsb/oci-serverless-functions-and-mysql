@@ -258,9 +258,9 @@ public class HelloFunction {
 
                 }
                 List<VehicleIOT> vehicleiots = vehicleiotMapper.selectAll();
-                for (VehicleIOT vehicleiot : vehicleiots) {
-                    System.out.println(vehicleiot);
-                }
+                // for (VehicleIOT vehicleiot : vehicleiots) {
+                //     System.out.println(vehicleiot);
+                // }
 
                 session.commit();
                 session.close();
@@ -271,8 +271,7 @@ public class HelloFunction {
                 System.err.println(ex);
             }
 
-            // use fileStream
-            System.out.println("--------------------5");
+      
 
         } // try-with-resources automatically closes fileStream
         catch (Exception e) {
