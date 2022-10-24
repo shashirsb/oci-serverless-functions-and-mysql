@@ -113,35 +113,7 @@ public class HelloFunction {
         //     System.out.println(e);
         // }
 
-        Configuration configuration = initMybatis();
-        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
-        try (SqlSession session = sqlSessionFactory.openSession()) {
-            PersonMapper personMapper = session.getMapper(PersonMapper.class);
-
-            // int batchSize = 20;
-            //BufferedReader lineReader = new BufferedReader(new FileReader(file));
-            BufferedReader lineReader = fileContent;
-            String lineText = null;
-
-            lineReader.readLine(); // skip header line
-            while ((lineText = lineReader.readLine()) != null) {
-                String[] data = lineText.split(",");
-                Person newPerson = new Person();
-                newPerson.setId(Long.parseLong(data[0]));
-                newPerson.setFirstName(data[1]);
-                newPerson.setLastName(data[2]);
-
-            }
-
-            // List<Person> persons = personMapper.selectAll();
-            // session.commit();
-            session.close();
-            lineReader.close();
-        } catch (FileNotFoundException e) {
-            System.out.println(e);
-        } catch (IOException ex) {
-            System.err.println(ex);
-        }
+       
 
         System.out.println("Inside Java Hello World function");
         return "Hello, World!";
@@ -281,10 +253,44 @@ public class HelloFunction {
                             .build());
             System.out.println("--------------------4");
 
-            fileContent = new BufferedReader(new InputStreamReader(getResponse.getInputStream()));
-                  // .lines().collect(Collectors.joining("\n"));
 
-            System.out.println(fileContent.toString());
+
+            Configuration configuration = initMybatis();
+            SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
+            System.out.println("--------------------4a");
+            try (SqlSession session = sqlSessionFactory.openSession()) {
+                //PersonMapper personMapper = session.getMapper(PersonMapper.class);
+                System.out.println("--------------------4b");
+                // int batchSize = 20;
+                //BufferedReader lineReader = new BufferedReader(new FileReader(file));
+                BufferedReader lineReader =  new BufferedReader(new InputStreamReader(getResponse.getInputStream()));
+                System.out.println("--------------------4c");
+                String lineText = null;
+    
+                lineReader.readLine(); // skip header line
+                System.out.println("--------------------4d");
+                while ((lineText = lineReader.readLine()) != null) {
+                    String[] data = lineText.split(",");
+                    Person newPerson = new Person();
+                    newPerson.setId(Long.parseLong(data[0]));
+                    newPerson.setFirstName(data[1]);
+                    newPerson.setLastName(data[2]);
+    
+                }
+                System.out.println("--------------------4e");
+                // List<Person> persons = personMapper.selectAll();
+                // session.commit();
+                session.close();
+                lineReader.close();
+                System.out.println("--------------------4f");
+            } catch (FileNotFoundException e) {
+                System.out.println(e);
+            } catch (IOException ex) {
+                System.err.println(ex);
+            }
+ 
+
+    
 
             // use fileStream
             System.out.println("--------------------5");
