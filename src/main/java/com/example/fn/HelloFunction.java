@@ -59,6 +59,8 @@ import java.util.stream.Collectors;
 import java.io.*;
 import java.net.*;
 
+import org.json.*;
+
 public class HelloFunction {
 
     private StreamAdminClient sAdminClient = null;
@@ -179,7 +181,6 @@ public class HelloFunction {
             streamClient = new StreamClient(provider);
             streamClient.setEndpoint(streamClientEndpoint);
 
-          
             // A cursor can be created as part of a consumer group.
             // Committed offsets are managed for the group, and partitions
             // are dynamically balanced amongst consumers in the group.
@@ -199,7 +200,7 @@ public class HelloFunction {
             streamClient.close();
             System.out.println("Closed stream clients");
         }
-    return result;
+        return result;
 
     }
 
@@ -293,12 +294,20 @@ public class HelloFunction {
             // process the messages
             System.out.println(String.format("Read %s messages.", getResponse.getItems().size()));
             for (Message message : ((GetMessagesResponse) getResponse).getItems()) {
-                System.out.println(
-                        String.format(
-                                "%s: %s",
-                                "jsonObj",
-                                new String(message.getValue())));
+                JSONObject obj;
+                try {
+                    obj = new JSONObject(new String(message.getValue()));
+                    System.out.println("hello--------------1");
+                    System.out.println(obj.getJSONObject("data").getString("resourceName"));
+                    System.out.println("hello--------------2");
+                } catch (JSONException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                
             }
+
+     
 
             // getMessages is a throttled method; clients should retrieve sufficiently large
             // message
