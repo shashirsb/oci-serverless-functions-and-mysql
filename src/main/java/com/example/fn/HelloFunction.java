@@ -64,7 +64,7 @@ public class HelloFunction {
     private StreamAdminClient sAdminClient = null;
     private StreamClient streamClient = null;
     ObjectStorage objStorageClient = null;
-    // String namespaceName = null;
+    String namespaceName = null;
 
     final ResourcePrincipalAuthenticationDetailsProvider provider = ResourcePrincipalAuthenticationDetailsProvider
             .builder().build();
@@ -73,6 +73,7 @@ public class HelloFunction {
         try {
 
             String region = System.getenv().get("STREAM_REGION"); // e.g. us-phoenix-1
+            namespaceName = "sehubjapacprod";
 
             sAdminClient = new StreamAdminClient(provider);
             sAdminClient.setEndpoint("https://cell-1.streaming.us-ashburn-1.oci.oraclecloud.com");
@@ -256,27 +257,31 @@ public class HelloFunction {
     public String getObjectStorage(String _objectName) {
         String result = null;
 
+        System.out.println("--------------------1");
         if (objStorageClient == null) {
             result = "Object Storage client is ready";
             System.out.println(result);
             return result;
         }
-
+        System.out.println("--------------------2");
         // fetch the file from the object storage
         String bucketName = "tamo-input-iot-files";
         String objectName = _objectName;
+        System.out.println("--------------------3");
         GetObjectResponse getResponse = objStorageClient.getObject(
                 GetObjectRequest.builder()
-                        // .namespaceName(namespaceName)
+                        .namespaceName(namespaceName)
                         .bucketName(bucketName)
                         .objectName(objectName)
                         .build());
-
+        System.out.println("--------------------4");
         // stream contents should match the file uploaded
         try (final InputStream fileStream = getResponse.getInputStream()) {
             // use fileStream
+            System.out.println("--------------------5");
             result = fileStream.toString();
             System.out.println(result);
+            System.out.println("--------------------6");
         } // try-with-resources automatically closes fileStream
         catch (Exception e) {
             result = "Error occurred - " + e.getMessage();
