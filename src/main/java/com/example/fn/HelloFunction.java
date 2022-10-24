@@ -87,60 +87,60 @@ public class HelloFunction {
             System.err.println("Error occurred in StreamProducerFunction constructor - " + ex.getMessage());
         }
 
-        // Insert into MYSQL
-        String name = (input == null || input.isEmpty()) ? "tamo-iot" : input;
+        // // Insert into MYSQL
+        // String name = (input == null || input.isEmpty()) ? "tamo-iot" : input;
 
-        URI uri = new URI("file:///tmp/iot.csv");
-        // File homedir = new File(System.getProperty("user.home"));
-        File file = new File(uri);
-        String csvFileUrl = "https://objectstorage.us-ashburn-1.oraclecloud.com/p/n5odYj5P7tXVIb3X13wUamCIU0-BtiMif9rT-stBk_LEzp93xxgwFziQEF2cAP0u/n/sehubjapacprod/b/tamo-input-iot-files/o/people.csv";
+        // URI uri = new URI("file:///tmp/iot.csv");
+        // // File homedir = new File(System.getProperty("user.home"));
+        // File file = new File(uri);
+        // String csvFileUrl = "https://objectstorage.us-ashburn-1.oraclecloud.com/p/n5odYj5P7tXVIb3X13wUamCIU0-BtiMif9rT-stBk_LEzp93xxgwFziQEF2cAP0u/n/sehubjapacprod/b/tamo-input-iot-files/o/people.csv";
 
-        try (BufferedInputStream in = new BufferedInputStream(new URL(csvFileUrl).openStream());
-                FileOutputStream fileOutputStream = new FileOutputStream(file)) {
+        // try (BufferedInputStream in = new BufferedInputStream(new URL(csvFileUrl).openStream());
+        //         FileOutputStream fileOutputStream = new FileOutputStream(file)) {
 
-            byte dataBuffer[] = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
-                fileOutputStream.write(dataBuffer, 0, bytesRead);
+        //     byte dataBuffer[] = new byte[1024];
+        //     int bytesRead;
+        //     while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
+        //         fileOutputStream.write(dataBuffer, 0, bytesRead);
 
-            }
-        } catch (FileNotFoundException e) {
-            System.out.println(e);
-        } catch (IOException e) {
-            System.out.println(e);
-        }
+        //     }
+        // } catch (FileNotFoundException e) {
+        //     System.out.println(e);
+        // } catch (IOException e) {
+        //     System.out.println(e);
+        // }
 
-        Configuration configuration = initMybatis();
-        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
-        try (SqlSession session = sqlSessionFactory.openSession()) {
-            PersonMapper personMapper = session.getMapper(PersonMapper.class);
+        // Configuration configuration = initMybatis();
+        // SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
+        // try (SqlSession session = sqlSessionFactory.openSession()) {
+        //     PersonMapper personMapper = session.getMapper(PersonMapper.class);
 
-            // int batchSize = 20;
-            BufferedReader lineReader = new BufferedReader(new FileReader(file));
-            String lineText = null;
+        //     // int batchSize = 20;
+        //     BufferedReader lineReader = new BufferedReader(new FileReader(file));
+        //     String lineText = null;
 
-            lineReader.readLine(); // skip header line
-            while ((lineText = lineReader.readLine()) != null) {
-                String[] data = lineText.split(",");
-                Person newPerson = new Person();
-                newPerson.setId(Long.parseLong(data[0]));
-                newPerson.setFirstName(data[1]);
-                newPerson.setLastName(data[2]);
+        //     lineReader.readLine(); // skip header line
+        //     while ((lineText = lineReader.readLine()) != null) {
+        //         String[] data = lineText.split(",");
+        //         Person newPerson = new Person();
+        //         newPerson.setId(Long.parseLong(data[0]));
+        //         newPerson.setFirstName(data[1]);
+        //         newPerson.setLastName(data[2]);
 
-            }
+        //     }
 
-            // List<Person> persons = personMapper.selectAll();
-            // session.commit();
-            session.close();
-            lineReader.close();
-        } catch (FileNotFoundException e) {
-            System.out.println(e);
-        } catch (IOException ex) {
-            System.err.println(ex);
-        }
+        //     // List<Person> persons = personMapper.selectAll();
+        //     // session.commit();
+        //     session.close();
+        //     lineReader.close();
+        // } catch (FileNotFoundException e) {
+        //     System.out.println(e);
+        // } catch (IOException ex) {
+        //     System.err.println(ex);
+        // }
 
         System.out.println("Inside Java Hello World function");
-        return "Hello, " + name + "!";
+        return "Hello, World!";
     }
 
     Configuration initMybatis() throws SQLException {
