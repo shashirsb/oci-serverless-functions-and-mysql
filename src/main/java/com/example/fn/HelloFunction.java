@@ -51,7 +51,7 @@ import org.apache.ibatis.type.TypeAliasRegistry;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
-
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -68,6 +68,7 @@ public class HelloFunction {
     ObjectStorage objStorageClient = null;
     String namespaceName = null;
     BufferedReader fileContent = null;
+    List<String> fileList = new ArrayList<String>();
 
     final ResourcePrincipalAuthenticationDetailsProvider provider = ResourcePrincipalAuthenticationDetailsProvider
             .builder().build();
@@ -83,8 +84,18 @@ public class HelloFunction {
             objStorageClient = new ObjectStorageClient(provider);
             objStorageClient.setRegion("us-ashburn-1");
 
-            String filename = consumer();
-            System.out.println("#####################1" + filename);
+            consumer();
+
+            // For loop for iterating over the List
+            for (int i = 0; i < fileList.size(); i++) {
+
+                // Print all elements of List
+                System.out.println("hello--------------1");
+                System.out.println(fileList.get(i));
+                System.out.println("hello--------------2");
+            }
+
+            
             // fileContent = getObjectStorage(filename);
 
         } catch (Throwable ex) {
@@ -278,7 +289,7 @@ public class HelloFunction {
         return fileContent;
     }
 
-    private static void simpleMessageLoop(
+    private List<String> simpleMessageLoop(
             StreamClient streamClient, String streamId, String initialCursor) {
         String cursor = initialCursor;
         for (int i = 0; i < 10; i++) {
@@ -297,17 +308,15 @@ public class HelloFunction {
                 JSONObject obj;
                 try {
                     obj = new JSONObject(new String(message.getValue()));
-                    System.out.println("hello--------------1");
-                    System.out.println(obj.getJSONObject("data").getString("resourceName"));
-                    System.out.println("hello--------------2");
+
+                    fileList.add(obj.getJSONObject("data").getString("resourceName").toString());
+
                 } catch (JSONException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-                
-            }
 
-     
+            }
 
             // getMessages is a throttled method; clients should retrieve sufficiently large
             // message
@@ -317,6 +326,7 @@ public class HelloFunction {
             // use the next-cursor for iteration
             cursor = getResponse.getOpcNextCursor();
         }
+        return fileList;
     }
 
     private static String getCursorByGroup(
