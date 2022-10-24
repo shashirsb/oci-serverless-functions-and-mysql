@@ -73,12 +73,15 @@ public class HelloFunction {
         try {
 
             String region = System.getenv().get("STREAM_REGION"); // e.g. us-phoenix-1
-            namespaceName = "sehubjapacprod";
+            
 
             sAdminClient = new StreamAdminClient(provider);
             sAdminClient.setEndpoint("https://cell-1.streaming.us-ashburn-1.oci.oraclecloud.com");
 
             objStorageClient = new ObjectStorageClient(provider);
+            GetNamespaceResponse namespaceResponse = objStorageClient.getNamespace(GetNamespaceRequest.builder().build());
+            String namespaceName = namespaceResponse.getValue();
+            System.out.println("Using namespace: " + namespaceName);
 
             String filename = consumer();
             getObjectStorage("time2.csv");
