@@ -78,7 +78,7 @@ public class HelloFunction {
             sAdminClient.setEndpoint("https://cell-1.streaming.us-ashburn-1.oci.oraclecloud.com");
 
             objStorageClient = new ObjectStorageClient(provider);
-            objStorageClient.setRegion(System.getenv().get("STREAM_REGION"));
+            objStorageClient.setRegion("us-ashburn-1");
 
             //String filename = consumer();
             getObjectStorage("time2.csv");
