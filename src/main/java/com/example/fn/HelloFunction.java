@@ -22,6 +22,20 @@ import com.oracle.bmc.streaming.requests.CreateGroupCursorRequest;
 import com.oracle.bmc.streaming.requests.GetMessagesRequest;
 import com.oracle.bmc.streaming.responses.CreateGroupCursorResponse;
 import com.oracle.bmc.streaming.responses.GetMessagesResponse;
+import com.oracle.bmc.ConfigFileReader;
+import com.oracle.bmc.Region;
+import com.oracle.bmc.auth.AuthenticationDetailsProvider;
+import com.oracle.bmc.auth.ConfigFileAuthenticationDetailsProvider;
+import com.oracle.bmc.objectstorage.ObjectStorage;
+import com.oracle.bmc.objectstorage.ObjectStorageClient;
+import com.oracle.bmc.objectstorage.model.BucketSummary;
+import com.oracle.bmc.objectstorage.requests.GetNamespaceRequest;
+import com.oracle.bmc.objectstorage.requests.GetObjectRequest;
+import com.oracle.bmc.objectstorage.requests.ListBucketsRequest;
+import com.oracle.bmc.objectstorage.requests.ListBucketsRequest.Builder;
+import com.oracle.bmc.objectstorage.responses.GetNamespaceResponse;
+import com.oracle.bmc.objectstorage.responses.GetObjectResponse;
+import com.oracle.bmc.objectstorage.responses.ListBucketsResponse;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -49,23 +63,25 @@ public class HelloFunction {
 
     private StreamAdminClient sAdminClient = null;
     private StreamClient streamClient = null;
+    ObjectStorage objStorageClient = null;
+    // String namespaceName = null;
+
     final ResourcePrincipalAuthenticationDetailsProvider provider = ResourcePrincipalAuthenticationDetailsProvider
             .builder().build();
 
     public String handleRequest(String input) throws SQLException, URISyntaxException {
-
-
         try {
 
-      
-            sAdminClient = new StreamAdminClient(provider);
-      
             String region = System.getenv().get("STREAM_REGION"); // e.g. us-phoenix-1
-       
+
+            sAdminClient = new StreamAdminClient(provider);
             sAdminClient.setEndpoint("https://cell-1.streaming.us-ashburn-1.oci.oraclecloud.com");
-         
-            produce();
-          
+
+            objStorageClient = new ObjectStorageClient(provider);
+
+            String filename = consumer();
+            getObjectStorage("time2.csv");
+
         } catch (Throwable ex) {
             System.err.println("Error occurred in StreamProducerFunction constructor - " + ex.getMessage());
         }
@@ -109,11 +125,11 @@ public class HelloFunction {
                 newPerson.setId(Long.parseLong(data[0]));
                 newPerson.setFirstName(data[1]);
                 newPerson.setLastName(data[2]);
-                
+
             }
 
             // List<Person> persons = personMapper.selectAll();
-            //session.commit();
+            // session.commit();
             session.close();
             lineReader.close();
         } catch (FileNotFoundException e) {
@@ -151,7 +167,7 @@ public class HelloFunction {
         return dataSource;
     }
 
-    public String produce() {
+    public String consumer() {
         String result = null;
 
         if (sAdminClient == null) {
@@ -218,21 +234,55 @@ public class HelloFunction {
             // Committed offsets are managed for the group, and partitions
             // are dynamically balanced amongst consumers in the group.
             System.out.println("Starting a simple message loop with a group cursor");
-            String groupCursor = getCursorByGroup(streamClient, "ocid1.stream.oc1.iad.amaaaaaaak7gbriastx37iu27vegisyx33smp36ijherxrmeota5c3w4u77a", "exampleGroup", "exampleInstance-1");
-            simpleMessageLoop(streamClient, "ocid1.stream.oc1.iad.amaaaaaaak7gbriastx37iu27vegisyx33smp36ijherxrmeota5c3w4u77a", groupCursor);
+            String groupCursor = getCursorByGroup(streamClient,
+                    "ocid1.stream.oc1.iad.amaaaaaaak7gbriastx37iu27vegisyx33smp36ijherxrmeota5c3w4u77a", "exampleGroup",
+                    "exampleInstance-1");
+            simpleMessageLoop(streamClient,
+                    "ocid1.stream.oc1.iad.amaaaaaaak7gbriastx37iu27vegisyx33smp36ijherxrmeota5c3w4u77a", groupCursor);
 
         } catch (Exception e) {
             result = "Error occurred - " + e.getMessage();
 
             System.out.println(result);
+            // } finally {
+            // sAdminClient.close();
+            // streamClient.close();
+            // System.out.println("Closed stream clients");
+            // }
         }
-        /*
-         * finally {
-         * sAdminClient.close();
-         * streamClient.close();
-         * System.out.println("Closed stream clients");
-         * }
-         */
+        return result;
+    }
+
+    public String getObjectStorage(String _objectName) {
+        String result = null;
+
+        if (objStorageClient == null) {
+            result = "Object Storage client is ready";
+            System.out.println(result);
+            return result;
+        }
+
+        // fetch the file from the object storage
+        String bucketName = "tamo-input-iot-files";
+        String objectName = _objectName;
+        GetObjectResponse getResponse = objStorageClient.getObject(
+                GetObjectRequest.builder()
+                        // .namespaceName(namespaceName)
+                        .bucketName(bucketName)
+                        .objectName(objectName)
+                        .build());
+
+        // stream contents should match the file uploaded
+        try (final InputStream fileStream = getResponse.getInputStream()) {
+            // use fileStream
+            result = fileStream.toString();
+            System.out.println(result);
+        } // try-with-resources automatically closes fileStream
+        catch (Exception e) {
+            result = "Error occurred - " + e.getMessage();
+
+            System.out.println(result);
+        }
 
         return result;
     }
