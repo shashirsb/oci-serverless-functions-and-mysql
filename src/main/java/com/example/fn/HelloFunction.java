@@ -103,28 +103,6 @@ public class HelloFunction {
             System.err.println("Error occurred in StreamProducerFunction constructor - " + ex.getMessage());
         }
 
-        // URI uri = new URI("file:///tmp/iot.csv");
-
-        // // File homedir = new File(System.getProperty("user.home"));
-        // File file = new File(uri);
-        // String csvFileUrl =
-        // "https://objectstorage.us-ashburn-1.oraclecloud.com/p/n5odYj5P7tXVIb3X13wUamCIU0-BtiMif9rT-stBk_LEzp93xxgwFziQEF2cAP0u/n/sehubjapacprod/b/tamo-input-iot-files/o/people.csv";
-
-        // try (BufferedInputStream in = new BufferedInputStream(new
-        // URL(csvFileUrl).openStream());
-        // FileOutputStream fileOutputStream = new FileOutputStream(file)) {
-
-        // byte dataBuffer[] = new byte[1024];
-        // int bytesRead;
-        // while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
-        // fileOutputStream.write(dataBuffer, 0, bytesRead);
-
-        // }
-        // } catch (FileNotFoundException e) {
-        // System.out.println(e);
-        // } catch (IOException e) {
-        // System.out.println(e);
-        // }
 
         System.out.println("Inside Java Hello World function");
         return "Hello, World!";

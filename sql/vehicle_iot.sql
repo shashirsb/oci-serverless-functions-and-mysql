@@ -1,6 +1,7 @@
 CREATE TABLE veh_iot
 (
     COMPACTNESS         INT,
+    CIRCULARITY         INT,
     DISTANCE_CIRCULARITY         INT,
     RADIUS_RATIO         INT,
     PR_AXIS_ASPECT_RATIO         INT,
