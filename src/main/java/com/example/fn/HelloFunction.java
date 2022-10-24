@@ -65,6 +65,7 @@ public class HelloFunction {
     private StreamClient streamClient = null;
     ObjectStorage objStorageClient = null;
     String namespaceName = null;
+    BufferedReader fileContent = null;
 
     final ResourcePrincipalAuthenticationDetailsProvider provider = ResourcePrincipalAuthenticationDetailsProvider
             .builder().build();
@@ -81,16 +82,18 @@ public class HelloFunction {
             objStorageClient.setRegion("us-ashburn-1");
 
             //String filename = consumer();
-            getObjectStorage("time2.csv");
+            fileContent = getObjectStorage("time2.csv");
 
         } catch (Throwable ex) {
             System.err.println("Error occurred in StreamProducerFunction constructor - " + ex.getMessage());
         }
 
-        // // Insert into MYSQL
-        // String name = (input == null || input.isEmpty()) ? "tamo-iot" : input;
+        // Insert into MYSQL
+        String name = (input == null || input.isEmpty()) ? "tamo-iot" : input;
 
         // URI uri = new URI("file:///tmp/iot.csv");
+
+
         // // File homedir = new File(System.getProperty("user.home"));
         // File file = new File(uri);
         // String csvFileUrl = "https://objectstorage.us-ashburn-1.oraclecloud.com/p/n5odYj5P7tXVIb3X13wUamCIU0-BtiMif9rT-stBk_LEzp93xxgwFziQEF2cAP0u/n/sehubjapacprod/b/tamo-input-iot-files/o/people.csv";
@@ -110,34 +113,35 @@ public class HelloFunction {
         //     System.out.println(e);
         // }
 
-        // Configuration configuration = initMybatis();
-        // SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
-        // try (SqlSession session = sqlSessionFactory.openSession()) {
-        //     PersonMapper personMapper = session.getMapper(PersonMapper.class);
+        Configuration configuration = initMybatis();
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            PersonMapper personMapper = session.getMapper(PersonMapper.class);
 
-        //     // int batchSize = 20;
-        //     BufferedReader lineReader = new BufferedReader(new FileReader(file));
-        //     String lineText = null;
+            // int batchSize = 20;
+            //BufferedReader lineReader = new BufferedReader(new FileReader(file));
+            BufferedReader lineReader = fileContent;
+            String lineText = null;
 
-        //     lineReader.readLine(); // skip header line
-        //     while ((lineText = lineReader.readLine()) != null) {
-        //         String[] data = lineText.split(",");
-        //         Person newPerson = new Person();
-        //         newPerson.setId(Long.parseLong(data[0]));
-        //         newPerson.setFirstName(data[1]);
-        //         newPerson.setLastName(data[2]);
+            lineReader.readLine(); // skip header line
+            while ((lineText = lineReader.readLine()) != null) {
+                String[] data = lineText.split(",");
+                Person newPerson = new Person();
+                newPerson.setId(Long.parseLong(data[0]));
+                newPerson.setFirstName(data[1]);
+                newPerson.setLastName(data[2]);
 
-        //     }
+            }
 
-        //     // List<Person> persons = personMapper.selectAll();
-        //     // session.commit();
-        //     session.close();
-        //     lineReader.close();
-        // } catch (FileNotFoundException e) {
-        //     System.out.println(e);
-        // } catch (IOException ex) {
-        //     System.err.println(ex);
-        // }
+            // List<Person> persons = personMapper.selectAll();
+            // session.commit();
+            session.close();
+            lineReader.close();
+        } catch (FileNotFoundException e) {
+            System.out.println(e);
+        } catch (IOException ex) {
+            System.err.println(ex);
+        }
 
         System.out.println("Inside Java Hello World function");
         return "Hello, World!";
@@ -254,14 +258,14 @@ public class HelloFunction {
         return result;
     }
 
-    public String getObjectStorage(String objectName) {
+    public BufferedReader getObjectStorage(String objectName) {
         String result = null;
 
         System.out.println("--------------------1");
         if (objStorageClient == null) {
             result = "Object Storage client is ready";
             System.out.println(result);
-            return result;
+           // return result;
         }
         System.out.println("--------------------2");
         // fetch the file from the object storage
@@ -277,8 +281,8 @@ public class HelloFunction {
                             .build());
             System.out.println("--------------------4");
 
-            result = new BufferedReader(new InputStreamReader(getResponse.getInputStream()))
-                    .lines().collect(Collectors.joining("\n"));
+            fileContent = new BufferedReader(new InputStreamReader(getResponse.getInputStream()));
+                  // .lines().collect(Collectors.joining("\n"));
 
             System.err.println(result);
 
@@ -292,7 +296,7 @@ public class HelloFunction {
             System.out.println(result);
         }
 
-        return result;
+        return fileContent;
     }
 
     private static void simpleMessageLoop(
