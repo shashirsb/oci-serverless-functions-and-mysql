@@ -284,7 +284,7 @@ public class HelloFunction {
             fileContent = new BufferedReader(new InputStreamReader(getResponse.getInputStream()));
                   // .lines().collect(Collectors.joining("\n"));
 
-            System.err.println(result);
+            System.out.println(fileContent.toString());
 
             // use fileStream
             System.out.println("--------------------5");
