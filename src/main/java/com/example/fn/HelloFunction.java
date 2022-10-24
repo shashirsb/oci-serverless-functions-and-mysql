@@ -272,12 +272,13 @@ public class HelloFunction {
                     newPerson.setId(Long.parseLong(data[0]));
                     newPerson.setFirstName(data[1]);
                     newPerson.setLastName(data[2]);
-                    System.out.println(data[1]);
+                    personMapper.insert(newPerson);
 
                 }
                 System.out.println("--------------------4e");
                 List<Person> persons = personMapper.selectAll();
                 for (Person person : persons) {
+                    System.out.println("--------------------4e1");
                     System.out.println(person);
                 }
 
