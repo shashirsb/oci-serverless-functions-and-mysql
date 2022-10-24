@@ -55,7 +55,7 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
+import java.util.stream.Collectors;
 import java.io.*;
 import java.net.*;
 
@@ -73,15 +73,12 @@ public class HelloFunction {
         try {
 
             String region = System.getenv().get("STREAM_REGION"); // e.g. us-phoenix-1
-            
 
             sAdminClient = new StreamAdminClient(provider);
             sAdminClient.setEndpoint("https://cell-1.streaming.us-ashburn-1.oci.oraclecloud.com");
 
             objStorageClient = new ObjectStorageClient(provider);
-            GetNamespaceResponse namespaceResponse = objStorageClient.getNamespace(GetNamespaceRequest.builder().build());
-            String namespaceName = namespaceResponse.getValue();
-            System.out.println("Using namespace: " + namespaceName);
+            objStorageClient.setRegion(System.getenv().get("STREAM_REGION"));
 
             String filename = consumer();
             getObjectStorage("time2.csv");
@@ -271,20 +268,23 @@ public class HelloFunction {
         String bucketName = "tamo-input-iot-files";
         // String objectName = _objectName;
         System.out.println("--------------------3");
-        GetObjectResponse getResponse = objStorageClient.getObject(
-                GetObjectRequest.builder()
-                        .namespaceName(namespaceName)
-                        .bucketName(bucketName)
-                        .objectName(objectName)
-                        .build());
-        System.out.println("--------------------4");
-        // stream contents should match the file uploaded
-        try (final InputStream fileStream = getResponse.getInputStream()) {
+        try {
+            GetObjectResponse getResponse = objStorageClient.getObject(
+                    GetObjectRequest.builder()
+                            .namespaceName("sehubjapacprod")
+                            .bucketName(bucketName)
+                            .objectName(objectName)
+                            .build());
+            System.out.println("--------------------4");
+
+            result = new BufferedReader(new InputStreamReader(getResponse.getInputStream()))
+                    .lines().collect(Collectors.joining("\n"));
+
+            System.err.println(result);
+
             // use fileStream
             System.out.println("--------------------5");
-            result = fileStream.toString();
-            System.out.println(result);
-            System.out.println("--------------------6");
+
         } // try-with-resources automatically closes fileStream
         catch (Exception e) {
             result = "Error occurred - " + e.getMessage();
