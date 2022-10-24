@@ -80,7 +80,7 @@ public class HelloFunction {
             objStorageClient = new ObjectStorageClient(provider);
             objStorageClient.setRegion(System.getenv().get("STREAM_REGION"));
 
-            String filename = consumer();
+            //String filename = consumer();
             getObjectStorage("time2.csv");
 
         } catch (Throwable ex) {
@@ -270,7 +270,7 @@ public class HelloFunction {
         System.out.println("--------------------3");
         try {
             GetObjectResponse getResponse = objStorageClient.getObject(
-                    GetObjectRequest.builder()
+                    GetObjectRequest.builder()                 
                             .namespaceName("sehubjapacprod")
                             .bucketName(bucketName)
                             .objectName(objectName)
