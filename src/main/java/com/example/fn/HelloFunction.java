@@ -259,7 +259,7 @@ public class HelloFunction {
             SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
             System.out.println("--------------------4a");
             try (SqlSession session = sqlSessionFactory.openSession()) {
-                //PersonMapper personMapper = session.getMapper(PersonMapper.class);
+                PersonMapper personMapper = session.getMapper(PersonMapper.class);
                 System.out.println("--------------------4b");
                 // int batchSize = 20;
                 //BufferedReader lineReader = new BufferedReader(new FileReader(file));
@@ -279,8 +279,8 @@ public class HelloFunction {
     
                 }
                 System.out.println("--------------------4e");
-                // List<Person> persons = personMapper.selectAll();
-                // session.commit();
+                List<Person> persons = personMapper.selectAll();
+                 session.commit();
                 session.close();
                 lineReader.close();
                 System.out.println("--------------------4f");
