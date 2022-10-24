@@ -90,13 +90,14 @@ public class HelloFunction {
             for (int i = 0; i < fileList.size(); i++) {
 
                 // Print all elements of List
-                System.out.println("hello--------------1");
+       
                 System.out.println(fileList.get(i));
-                System.out.println("hello--------------2");
+                fileContent = getObjectStorage(fileList.get(i));
+             
             }
 
             
-            // fileContent = getObjectStorage(filename);
+           
 
         } catch (Throwable ex) {
             System.err.println("Error occurred in StreamProducerFunction constructor - " + ex.getMessage());
