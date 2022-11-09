@@ -176,10 +176,10 @@ public class HelloFunction {
             // are dynamically balanced amongst consumers in the group.
             System.out.println("Starting a simple message loop with a group cursor");
             String groupCursor = getCursorByGroup(streamClient,
-                    "ocid1.stream.oc1.iad.amaaaaaaak7gbriastx37iu27vegisyx33smp36ijherxrmeota5c3w4u77a", "exampleGroup",
+                    "ocid1.stream.oc1.iad.amaaaaaaak7gbriaf2shmjqhb3w3vvkoro6x6tn4frbottkhjchj6ucnflpa", "exampleGroup",
                     "exampleInstance-1");
             simpleMessageLoop(streamClient,
-                    "ocid1.stream.oc1.iad.amaaaaaaak7gbriastx37iu27vegisyx33smp36ijherxrmeota5c3w4u77a", groupCursor);
+                    "ocid1.stream.oc1.iad.amaaaaaaak7gbriaf2shmjqhb3w3vvkoro6x6tn4frbottkhjchj6ucnflpa", groupCursor);
 
         } catch (Exception e) {
             result = "Error occurred - " + e.getMessage();
